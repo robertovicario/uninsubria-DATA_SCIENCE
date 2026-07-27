@@ -1,0 +1,12 @@
+steps:
+    - name: gcr.io/cloud-builders/docker
+      args:
+          - build
+          - -f
+          - docker/Dockerfile.etl
+          - -t
+          - europe-west8-docker.pkg.dev/uninsubria-data-science/larionow-dataset/collector:latest
+          - .
+
+images:
+    - europe-west8-docker.pkg.dev/uninsubria-data-science/larionow-dataset/collector:latest

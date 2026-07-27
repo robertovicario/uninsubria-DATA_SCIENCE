@@ -1,28 +1,31 @@
-# PythonApp
+# Data Science for Business, MSc Course @ University of Insubria
+
+This repository contains my project work for the Data Science for Business course at the University of Insubria, part of the MSc in Computer Science.
 
 ## Overview
 
-This project is a simple Python application that serves as a template for building web applications. It includes a basic structure with Docker support for easy deployment and development.
+This project is an AI-powered Python application for weather nowcasting in the Lake Como area. It combines data from a network of physical sensor stations, which collect environmental measurements every five minutes, with a machine learning model trained on these observations to generate short-term forecasts (30–120 minutes ahead). By leveraging high-frequency, real-time sensor data, the system aims to provide accurate hyperlocal predictions of rapidly evolving weather conditions.
 
 ## Prerequisites
 
 > [!IMPORTANT]
 >
+> - uv
 > - Docker
 > - Docker Compose
 
 ## User Interface (UI)
 
-| <a href="https://pythonapp-8jk6.onrender.com"><img src="docs/cover.png" alt="UI" width="512"></a> |
+| <a href="#"><img src="docs/cover.png" alt="UI" width="512"></a> |
 | :-: |
-| **Home - PythonApp** |
+| **Home - LarioNow** |
 
 ## Instructions
 
 Usage:
 
 ```sh
-bash cmd.sh {start|stop|setup|clear}
+bash cmd.sh {setup|collector|schedule_jobs|deploy_jobs}
 ```
 
 ### `setup`
@@ -33,38 +36,38 @@ If you haven't built the project yet, you can do so by running:
 bash cmd.sh setup
 ```
 
-Once the setup process is complete, the project will be accessible at `localhost:7860`.
+### `collector`
+
+To collect data, you can run the following command:
+
+```sh
+bash cmd.sh collector
+```
+
+It exists a Google Cloud Run workflow that runs the ETL pipeline every 5 minutes.
+
+### `schedule_jobs`
+
+...
+
+### `deploy_jobs`
+
+...
+
+## Credits
 
 > [!WARNING]
 >
-> If this port is already in use, search for all occurrences of `7860` within the project and replace them with your preferred port number. After making these changes, you'll need to rebuild the project for the modifications to take effect.
-
-### `start`
-
-The program will run in debug mode, meaning frontend changes will be rendered upon reload. However, if you make changes to the backend, you will need to restart the program by running:
-
-```sh
-bash cmd.sh start
-```
-
-### `stop`
-
-To stop the program, simply run:
-
-```sh
-bash cmd.sh stop
-```
-
-> [!TIP]  
-> For a quicker way to stop, use `ctrl + C` to force stop the program.
-
-### `clear`
-
-If you need to clear all containers and their orphaned dependencies, you can run:
-
-```sh
-bash cmd.sh clear
-```
+> Please use this project responsibly, it was created by me for an exam session that I completed at _University of Insubria_. If you use or reference this project, please cite it as follows:
+>
+> ```bib
+> @misc{vicario2026datascience,
+>     author = {R. Vicario},
+>     title  = {uninsubria-DATA_SCIENCE},
+>     year   = {2026},
+>     url    = {https://github.com/robertovicario/uninsubria-DATA_SCIENCE}
+> }
+> ```
 
 ## License
 

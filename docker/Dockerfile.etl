@@ -1,0 +1,14 @@
+FROM paddlepaddle/paddle:3.3.1
+
+WORKDIR /app
+
+COPY packages/collector.txt requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY jobs/ .
+COPY config/ config/
+COPY lib/ lib/
+
+RUN python -c "from paddleocr import TextRecognition; TextRecognition(model_name='PP-OCRv5_server_rec', device='cpu')"
+
+CMD ["python", "collector.py"]
