@@ -25,7 +25,7 @@ This project is an AI-powered Python application for weather nowcasting in the L
 Usage:
 
 ```sh
-bash cmd.sh {setup|collector|schedule_jobs|deploy_jobs}
+bash cmd.sh {setup|collector|deploy_jobs}
 ```
 
 ### `setup`
@@ -45,10 +45,6 @@ bash cmd.sh collector
 ```
 
 It exists a Google Cloud Run workflow that runs the ETL pipeline every 5 minutes.
-
-### `schedule_jobs`
-
-...
 
 ### `deploy_jobs`
 

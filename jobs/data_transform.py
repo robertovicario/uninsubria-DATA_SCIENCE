@@ -48,7 +48,7 @@ def transform_data(
     logger.info(
 f"""\n
 # =========================
-# (2) TRANSOFRMATION
+# (2) TRANSFORMATION
 # =========================
 """
     )
@@ -179,7 +179,7 @@ f"""\n
         except Exception as e:
             logger.error(f"{the_config.LOG_TIMESTAMP} {str(e)}\n")
             continue
-        logger.success(f"{the_config.LOG_TIMESTAMP} TRASFORMED: {filename}\n")
+        logger.success(f"{the_config.LOG_TIMESTAMP} TRANSFORMED: {filename}\n")
 
     # -------------------------
 

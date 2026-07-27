@@ -26,26 +26,14 @@ CYAN="\033[36m"
 PROJECT_ID="uninsubria-data-science"
 DATASET_ID="larionow-dataset"
 REGION_RUN="europe-west8"
-REGION_SCHEDULER="europe-west1"
 JOB_NAME="collector"
-SCHEDULER_JOB="collector-job"
-TIME_ZONE="Europe/Rome"
 SERVICE_ACCOUNT="289545143980-compute@developer.gserviceaccount.com"
-RUN_ARGS=(
+ARGS_RUN=(
     --image="${REGION_RUN}-docker.pkg.dev/${PROJECT_ID}/${DATASET_ID}/${JOB_NAME}:latest"
     --region="${REGION_RUN}"
     --memory=2Gi
     --cpu=2
     --task-timeout=30m
-)
-SCHEDULER_ARGS=(
-    --location="${REGION_SCHEDULER}"
-    --schedule="*/5 * * * *"
-    --time-zone="${TIME_ZONE}"
-    --uri="https://run.googleapis.com/v2/projects/${PROJECT_ID}/locations/${REGION_RUN}/jobs/${JOB_NAME}:run"
-    --http-method=POST
-    --oauth-service-account-email="${SERVICE_ACCOUNT}"
-    --oauth-token-scope="https://www.googleapis.com/auth/cloud-platform"
 )
 
 # =========================
@@ -81,38 +69,6 @@ collector() {
     handler $STATUS
 }
 
-schedule_jobs() {
-
-    printer -setup "Scheduling jobs with Google Cloud Scheduler..."
-    if gcloud scheduler jobs describe "${SCHEDULER_JOB}" \
-        --location="${REGION_SCHEDULER}" >/dev/null 2>&1; then
-
-        # UPDATE
-        gcloud scheduler jobs update http "${SCHEDULER_JOB}" \
-            "${SCHEDULER_ARGS[@]}" || {
-            handler $?
-            return
-        }
-
-        # RESUME
-        STATE=$(gcloud scheduler jobs describe "${SCHEDULER_JOB}" \
-            --location="${REGION_SCHEDULER}" \
-            --format="value(state)")
-        if [ "${STATE}" = "PAUSED" ]; then
-            gcloud scheduler jobs resume "${SCHEDULER_JOB}" \
-                --location="${REGION_SCHEDULER}"
-        fi
-    else
-
-        # CREATE
-        gcloud scheduler jobs create http "${SCHEDULER_JOB}" \
-            "${SCHEDULER_ARGS[@]}"
-    fi
-
-    # Handler
-    handler $?
-}
-
 deploy_jobs() {
 
     # BUILD
@@ -124,7 +80,7 @@ deploy_jobs() {
 
     # DEPLOY
     gcloud run jobs deploy "${JOB_NAME}" \
-        "${RUN_ARGS[@]}"
+        "${ARGS_RUN[@]}"
 
     # Handler
     handler $?
@@ -143,7 +99,6 @@ usage() {
 2. Commands:
     - [${ICON_SETUP}] setup
     - [${ICON_START}] collector
-    - [${ICON_SETUP}] schedule_jobs
     - [${ICON_SETUP}] deploy_jobs
 
 EOF
@@ -210,9 +165,6 @@ case $1 in
         ;;
     collector)
         collector
-        ;;
-    schedule_jobs)
-        schedule_jobs
         ;;
     deploy_jobs)
         deploy_jobs
