@@ -161,8 +161,8 @@ def ocr_predict(ocr_model, ocr_fields, pieces, verbose=False):
         }
 
         if verbose:
-            label = f"{field}:".rjust(17)
-            logger.debug(f"{label}{rec_text:>6} (confidence={rec_score:.3f})")
+            label = f"{field}:".rjust(15)
+            logger.debug(f"{label}{rec_text:>7} (confidence={rec_score:.3f})")
 
     # -------------------------
 
@@ -190,14 +190,23 @@ def isolate_text(img, hsv_lower, hsv_upper, dilate_iterations=0):
 
 def parse_filename(filename):
 
-    tag, date_str, hm = os.path.splitext(filename)[0].rsplit("-", 2)
-    date = datetime.strptime(date_str, "%Y%m%d").date().isoformat()
-    hour = int(hm[:2])
-    minute = int(hm[2:])
+    station, date_str, hm = os.path.splitext(filename)[0].rsplit("-", 2)
+    time_features = {
+        "date": datetime.strptime(date_str, "%Y%m%d").date().isoformat(),
+        "year": int(date_str[:4]),
+        "month": int(date_str[4:6]),
+        "day": int(date_str[6:]),
+        "hour": int(hm[:2]),
+        "minute": int(hm[2:]),
+        "quarter": (int(hm[:2]) // 3) + 1,
+        "week_of_year": datetime.strptime(date_str, "%Y%m%d").isocalendar()[1],
+        "day_of_year": datetime.strptime(date_str, "%Y%m%d").timetuple().tm_yday,
+        "day_of_week": datetime.strptime(date_str, "%Y%m%d").isocalendar()[2],
+    }
 
     # -------------------------
 
-    return tag, date, hour, minute
+    return station, time_features
 
 def parse_int(text):
 

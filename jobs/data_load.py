@@ -70,31 +70,43 @@ f"""\n
         table = bigquery.Table(
             the_config.BQ_TABLE,
             schema=[
-                bigquery.SchemaField("filename", "STRING"),
                 bigquery.SchemaField("date", "DATE"),
                 bigquery.SchemaField("year", "INTEGER"),
                 bigquery.SchemaField("month", "INTEGER"),
                 bigquery.SchemaField("day", "INTEGER"),
                 bigquery.SchemaField("hour", "INTEGER"),
                 bigquery.SchemaField("minute", "INTEGER"),
+                bigquery.SchemaField("quarter", "INTEGER"),
+                bigquery.SchemaField("week_of_year", "INTEGER"),
+                bigquery.SchemaField("day_of_year", "INTEGER"),
+                bigquery.SchemaField("day_of_week", "INTEGER"),
                 bigquery.SchemaField("station", "STRING"),
                 bigquery.SchemaField("city", "STRING"),
                 bigquery.SchemaField("province", "STRING"),
-                bigquery.SchemaField("lat", "FLOAT"),
-                bigquery.SchemaField("lon", "FLOAT"),
-                bigquery.SchemaField("elevation_m", "FLOAT"),
+                bigquery.SchemaField("latitude", "FLOAT"),
+                bigquery.SchemaField("longitude", "FLOAT"),
+                bigquery.SchemaField("altitude_m", "FLOAT"),
                 bigquery.SchemaField("temperature_c", "FLOAT"),
+                bigquery.SchemaField("conf_temperature_c", "FLOAT"),
                 bigquery.SchemaField("humidity_pct", "INTEGER"),
+                bigquery.SchemaField("conf_humidity_pct", "FLOAT"),
                 bigquery.SchemaField("dew_point_c", "FLOAT"),
-                bigquery.SchemaField("wind_kmh", "FLOAT"),
+                bigquery.SchemaField("conf_dew_point_c", "FLOAT"),
+                bigquery.SchemaField("wind_speed_kmh", "FLOAT"),
+                bigquery.SchemaField("conf_wind_speed_kmh", "FLOAT"),
                 bigquery.SchemaField("wind_dir", "STRING"),
+                bigquery.SchemaField("conf_wind_dir", "FLOAT"),
                 bigquery.SchemaField("pressure_hpa", "FLOAT"),
+                bigquery.SchemaField("conf_pressure_hpa", "FLOAT"),
                 bigquery.SchemaField("rain_mm", "FLOAT"),
+                bigquery.SchemaField("conf_rain_mm", "FLOAT"),
                 bigquery.SchemaField("rain_mmh", "FLOAT"),
+                bigquery.SchemaField("conf_rain_mmh", "FLOAT"),
+                bigquery.SchemaField("conf_overall_gmean", "FLOAT")
             ],
         )
         CLIENT_BQ.create_table(table)
-        for _ in range(10):
+        for _ in range(the_config.N_RETRY):
             try:
                 CLIENT_BQ.get_table(table.reference)
                 break

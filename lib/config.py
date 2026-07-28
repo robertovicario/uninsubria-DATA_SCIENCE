@@ -23,9 +23,11 @@ IMG_URL = "http://rete.centrometeolombardo.com/{province}/{tag}/immagini/v.png"
 ROOT_PATH = Path(__file__).resolve().parents[1]
 
 STATIONS_JSON = ROOT_PATH / "config/stations.json"
+PROFILING_HTML = ROOT_PATH / "notebook/out/profiling.html"
 TMP_IMG_PATH = ROOT_PATH / "tmp/img"
 PATHS = [
     STATIONS_JSON,
+    PROFILING_HTML,
     TMP_IMG_PATH
 ]
 
@@ -71,7 +73,7 @@ OCR_FIELDS = [
     "temperature_c",
     "humidity_pct",
     "dew_point_c",
-    "wind_kmh",
+    "wind_speed_kmh",
     "wind_dir",
     "pressure_hpa",
     "rain_mm",

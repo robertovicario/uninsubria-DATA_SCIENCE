@@ -24,6 +24,7 @@ from lib import utils as the_utils
 
 # -------------------------
 
+# Settings
 paddle.disable_signal_handler()
 
 # =========================
@@ -64,14 +65,13 @@ f"""\n
 
         # Filename
         filename = os.path.basename(img_file)
-        station, date, hour, minute = the_utils.parse_filename(filename)
-        year, month, day = date.split("-")
+        station, time_features = the_utils.parse_filename(filename)
         metadata = stations[station]
         city = metadata["city"]
         province = metadata["province"]
-        lat = metadata["lat"]
-        lon = metadata["lon"]
-        elevation = metadata["elevation_m"]
+        latitude = metadata["latitude"]
+        longitude = metadata["longitude"]
+        altitude = metadata["altitude_m"]
         logger.debug(f"{the_config.LOG_TIMESTAMP} [{i:02d}/{total_img:02d}]")
         logger.debug(f"{the_config.LOG_TIMESTAMP} STATION: {city}")
 
@@ -142,40 +142,65 @@ f"""\n
 
             # Data Appending
             records = {
-                "filename": filename,
-                "date": date,
-                "year": year,
-                "month": month,
-                "day": day,
-                "hour": hour,
-                "minute": minute,
+                "date": time_features["date"],
+                "year": time_features["year"],
+                "month": time_features["month"],
+                "day": time_features["day"],
+                "hour": time_features["hour"],
+                "minute": time_features["minute"],
+                "quarter": time_features["quarter"],
+                "week_of_year": time_features["week_of_year"],
+                "day_of_year": time_features["day_of_year"],
+                "day_of_week": time_features["day_of_week"],
                 "station": station,
                 "city": city,
                 "province": province,
-                "lat": lat,
-                "lon": lon,
-                "elevation_m": elevation
+                "latitude": latitude,
+                "longitude": longitude,
+                "altitude_m": altitude
             }
             fields = {
                 "temperature_c": the_utils.parse_float,
                 "humidity_pct": the_utils.parse_int,
                 "dew_point_c": the_utils.parse_float,
-                "wind_kmh": the_utils.parse_float,
+                "wind_speed_kmh": the_utils.parse_float,
                 "wind_dir": the_utils.normalize_wind_dir,
                 "pressure_hpa": the_utils.parse_float,
                 "rain_mm": the_utils.parse_float,
-                "rain_mmh": the_utils.parse_float,
+                "rain_mmh": the_utils.parse_float
+            }
+            conf_fields = {
+                "temperature_c": "conf_temperature_c",
+                "humidity_pct": "conf_humidity_pct",
+                "dew_point_c": "conf_dew_point_c",
+                "wind_speed_kmh": "conf_wind_speed_kmh",
+                "wind_dir": "conf_wind_dir",
+                "pressure_hpa": "conf_pressure_hpa",
+                "rain_mm": "conf_rain_mm",
+                "rain_mmh": "conf_rain_mmh"
             }
 
             for field, parser in fields.items():
 
                 try:
-                    records[field] = parser(values[field])
+                    pred = values[field]
+                    records[field] = parser(pred["rec_text"])
+                    records[conf_fields[field]] = float(pred["rec_score"])
                 except Exception as e:
                     records[field] = None
+                    records[conf_fields[field]] = None
                     logger.warning(f"{the_config.LOG_TIMESTAMP} {str(e)}")
             new_data.append(records)
 
+            rec_scores = [
+                records[conf]
+                for conf in conf_fields.values()
+                if records[conf] is not None
+            ]
+            records["conf_overall_gmean"] = (
+                round(np.exp(np.mean(np.log(rec_scores))), 3)
+                if rec_scores else None
+            )
         except Exception as e:
             logger.error(f"{the_config.LOG_TIMESTAMP} {str(e)}\n")
             continue

@@ -1,5 +1,7 @@
 FROM paddlepaddle/paddle:3.3.1
 
+ENV DISABLE_MODEL_SOURCE_CHECK=True
+
 WORKDIR /app
 
 COPY packages/collector.txt requirements.txt

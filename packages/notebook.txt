@@ -5,7 +5,10 @@ loguru
 matplotlib
 nbconvert
 opencv-python-headless
-paddleocr
+paddleocr==3.3.1
 paddlepaddle
 pandas
 requests
+setuptools==80.9.0
+shap
+ydata_profiling
